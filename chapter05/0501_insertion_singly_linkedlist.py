@@ -1,5 +1,5 @@
 class Node:
-    def __init__(self, val=None):
+    def __init__(self, val):
         self.val = val
         self.next = None
 
@@ -110,3 +110,32 @@ class LinkedList:
             res.append(current_node)
             current_node = current_node.next
         return res
+
+
+def test_linked_list(line):
+    linked_list = LinkedList()
+    line = line.split(',')
+    # print(line)
+    for command in line:
+        # print(command)
+        # insertion
+        if ':' in command:
+            index, val = command.split(':')
+            status = linked_list.insert(int(index), val)
+            if not status:
+                print("Data cannot be added")
+            else:
+                print(f'index = {index.strip()} and data = {val}')
+        else:
+            vals = command.split()
+            for val in vals:
+                linked_list.add_right(val)
+        formatted_linked_list = "List is empty"
+        if not linked_list.is_empty():
+            items = linked_list.get_item()
+            formatted_linked_list = 'link list : ' + '->'.join([str(node.val) for node in items])
+        print(formatted_linked_list)
+
+
+inp = input('Enter Input : ')
+test_linked_list(inp)
