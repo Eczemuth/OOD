@@ -1,31 +1,31 @@
 class Stack:
     def __init__(self):
-        self.stack = []
+        self.__stack = []
 
     def __repr__(self):
-        temp = [str(e) for e in self.stack[::]]
+        temp = [str(e) for e in self.__stack[::]]
         return '[' + ','.join(temp) + ']'
 
     def push(self, val):
-        self.stack.append(val)
+        self.__stack.append(val)
 
     def pop(self):
-        if not self.stack:
+        if not self.__stack:
             return None
-        val = self.stack[-1]
-        del self.stack[-1]
+        val = self.__stack[-1]
+        del self.__stack[-1]
         return val
 
-    def isEmpty(self):
-        return len(self.stack) == 0
+    def is_empty(self):
+        return len(self.__stack) == 0
 
     def size(self):
-        return len(self.stack)
+        return len(self.__stack)
 
     def peek(self):
-        if not self.stack:
+        if not self.__stack:
             return None
-        return self.stack[-1]
+        return self.__stack[-1]
 
 
 def change_drunk(h, drunk):
@@ -55,26 +55,32 @@ def count_trees(trees):
             tree_found = 0
             most_height = 0
 
-            while not stack.isEmpty():
+            while not stack.is_empty():
                 curr_h = stack.pop()
                 temp.push(curr_h)
                 if curr_h > most_height:
                     tree_found += 1
                     most_height = curr_h
 
-            while not temp.isEmpty():
+            while not temp.is_empty():
                 stack.push(temp.pop())
 
             print(tree_found)
 
         elif action == 'S':
-            for i in range(stack.size()):
-                if stack.stack[i] % 2 == 0:
-                    stack.stack[i] -= 1
-                    if stack.stack[i] < 1:
-                        stack.stack[i] = 1
+            temp_stack = Stack()
+            while not stack.is_empty():
+                val = stack.pop()
+                if val % 2 == 0:
+                    val -= 1
+                    if val < 1:
+                        val = 1
                 else:
-                    stack.stack[i] += 2
+                    val += 2
+                temp_stack.push(val)
+
+            while not temp_stack.is_empty():
+                stack.push(temp_stack.pop())
 
 
 command = input('Enter Input : ').split(',')
