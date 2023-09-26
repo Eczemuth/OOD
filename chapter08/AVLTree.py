@@ -15,6 +15,12 @@ class Node:
     def __gt__(self, other):
         return self.val > other.val
 
+    def __ge__(self, other):
+        return self.val >= other.val
+
+    def __le__(self, other):
+        return self.val <= other.val
+
     def __eq__(self, other):
         return self.val == other.val
 
@@ -84,20 +90,23 @@ class AVLTree:
         self.root = recursive_insert(self.root, new_node)
 
     @staticmethod
-    def re_balance(root):
-        left_child_height = AVLTree.get_height(root.left)
-        right_child_height = AVLTree.get_height(root.right)
-        root.bf = left_child_height - right_child_height
+    def re_balance(local_root):
+        if not local_root:
+            return None
+        left_child_height = AVLTree.get_height(local_root.left if local_root else None)
+        right_child_height = AVLTree.get_height(local_root.right if local_root else None)
+        local_root.bf = left_child_height - right_child_height
 
-        if root.bf > 1:  # heavy left
-            if (root.left.bf if root.left else 0) < 0:
-                root.left = AVLTree.left_rotation(root.left)
-            root = AVLTree.right_rotation(root)
-        elif root.bf < -1:  # heavy right
-            if (root.right.bf if root.right else 0) > 0:
-                root.right = AVLTree.right_rotation(root.right)
-            root = AVLTree.left_rotation(root)
-        return root
+        if local_root.bf > 1:  # heavy left
+            if (local_root.left.bf if local_root.left else 0) < 0:
+                local_root.left = AVLTree.left_rotation(local_root.left)
+            local_root = AVLTree.right_rotation(local_root)
+        elif local_root.bf < -1:  # heavy right
+            if (local_root.right.bf if local_root.right else 0) > 0:
+                local_root.right = AVLTree.right_rotation(local_root.right)
+            local_root = AVLTree.left_rotation(local_root)
+        AVLTree.update_height(local_root)
+        return local_root
 
     def traverse(self):
         def in_order(node, level=0):
@@ -108,51 +117,24 @@ class AVLTree:
 
         in_order(self.root)
 
-    def delete_node(self, target):
-        def get_left_most(root):
-            if not root.left:
+    def delete(self, data):
+        def _delete(root: Node, key):
+            if root is None:
                 return root
-            return get_left_most(root.left)
-
-        def get_right_most(root):
-            if not root.right:
-                return root
-            return get_right_most(root.right)
-
-        def _delete(root: Node, target):
-            if not root:
-                return 0, None
-            if root.val == target:
-                if root.is_leaf():  # delete leaf node
-                    return 1, root
-                if not root.left and root.right or root.left and not root.right:  # delete single child node
-                    return 2, root
-
-                # delete node with 2 children
-                min_in_right = get_left_most(root.right)
-                root.val = min_in_right.val
-                _delete(root.right, min_in_right.val)
-                return 0, None
-
-            # search for target
-            if target < root.val:
-                status, target_node = _delete(root.left, target)
+            if int(key) < int(root.val):
+                root.left = _delete(root.left, key)
+            elif int(key) > int(root.val):
+                root.right = _delete(root.right, key)
             else:
-                status, target_node = _delete(root.right, target)
+                if root.left is None or root.right is None:
+                    root = root.left if root.right is None else root.right
+                else:
+                    temp = root.left
+                    while temp.right is not None:
+                        temp = temp.right
+                    root.val = temp.val
+                    root.left = _delete(root.left, temp.val)
+            root = self.re_balance(root)
+            return root
 
-            if status != 0:
-                if status == 1:
-                    if root.left.val == target:
-                        root.left = None
-                    elif root.right.val == target:
-                        root.right = None
-                elif status == 2:
-                    root.left = root.left.left if root.left.left else root.left.right
-                # if status == 3:
-                #     min_in_right = get_left_most(root.right)
-                #     root.val = min_in_right.val
-                #     _delete(root, min_in_right.val)
-
-            return 0, root
-
-        _, self.root = _delete(self.root, target)
+        self.root = _delete(self.root, data)
