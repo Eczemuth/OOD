@@ -1,9 +1,7 @@
-g_index = 0
+import random
 
 
 def merge_sort(arr):
-    global g_index
-    g_index += 1
     if len(arr) < 2:
         return arr
 
@@ -24,8 +22,6 @@ def merge_sort(arr):
         local_res.extend(right_arr)
     return local_res
 
-
-import random
 
 testcases = [[random.randint(-50, 50) for _ in range(random.randint(5, 15))] for _ in range(20)]
 
