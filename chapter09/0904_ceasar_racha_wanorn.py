@@ -9,6 +9,8 @@ class Monkey:
         self.attr_prior = []
 
     def set_prior(self, attr_order):
+        # 2: prepare a tuple according to priority
+        # and use this tuple for comparison later on
         res = []
         for attr in attr_order:
             if attr == 'str':
@@ -25,6 +27,10 @@ class Monkey:
         return f'{self.mid}-{self.name}'
 
     def __lt__(self, other):
+        # 1: when use '<' between Monkey and Monkey instance
+        # Python will call this function.
+
+        # 3: if you don't know why the code below works search how tuple comparison work in python
         return self.attr_prior < other.attr_prior
 
     def __le__(self, other):
