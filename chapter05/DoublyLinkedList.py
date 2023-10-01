@@ -110,11 +110,6 @@ class DoublyLinkedList:
 
         return res
 
-
-class DoublyLinkedListForOOD(DoublyLinkedList):
-    def __init__(self):
-        super().__init__()
-
     def __reverse(self):
         res = []
         last_node = self.tail.prev
